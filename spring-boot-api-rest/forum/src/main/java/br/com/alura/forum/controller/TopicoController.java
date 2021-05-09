@@ -15,7 +15,8 @@ public class TopicoController {
     @GetMapping("/topicos")
     public List<TopicoDTO> listaTopicos(){
         Topico topico = new Topico("Dúvida", "Dúvida com Spring", new Curso("Spring", "Programação"));
-        TopicoDTO dto = new TopicoDTO(topico);
-        return Arrays.asList(dto, dto, dto);
+        //TopicoDTO dto = new TopicoDTO(topico);
+        //return Arrays.asList(dto, dto, dto);
+        return TopicoDTO.converter(Arrays.asList(topico, topico, topico));
     }
 }
