@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -34,10 +35,11 @@ public class TopicoController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity cadastraTopico(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<TopicoDTO> cadastraTopico(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico novoTopico = repo.save(form.converter(cursoRepository));
-
-        //return ResponseEntity.created(uriBuilder.buildAndExpand(novoTopico.getTitulo()).toUri()).build();
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(novoTopico.getId()).toUri();
+        return ResponseEntity
+                .created(uri)
+                .body(new TopicoDTO(novoTopico));
     }
 }
