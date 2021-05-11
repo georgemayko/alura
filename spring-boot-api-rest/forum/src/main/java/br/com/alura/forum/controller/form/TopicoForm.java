@@ -5,7 +5,14 @@ import br.com.alura.forum.modelo.Curso;
 import br.com.alura.forum.modelo.Topico;
 import org.springframework.util.Assert;
 
-public record TopicoForm(String titulo, String mensagem, String nomeCurso) {
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+public record TopicoForm (
+    @NotNull @NotEmpty String titulo,
+    @NotBlank String mensagem,
+    @NotBlank String nomeCurso) {
 
     public Topico converter(CursoRepository cursoRepository) {
         Curso curso = cursoRepository.findByNome(nomeCurso);
