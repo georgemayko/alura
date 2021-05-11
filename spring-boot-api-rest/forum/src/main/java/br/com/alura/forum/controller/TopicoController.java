@@ -16,9 +16,10 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/topicos")
+@RequestMapping(TopicoController.TOPICOS_PATH)
 public class TopicoController {
 
+    public static final String TOPICOS_PATH = "/topicos";
     private TopicoRepository repo;
     private CursoRepository cursoRepository;
 
@@ -38,9 +39,7 @@ public class TopicoController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TopicoDTO> cadastraTopico( @RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico novoTopico = repo.save(form.converter(cursoRepository));
-        URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(novoTopico.getId()).toUri();
-        return ResponseEntity
-                .created(uri)
-                .body(new TopicoDTO(novoTopico));
+        URI uri = uriBuilder.path(TOPICOS_PATH + "/{id}").buildAndExpand(novoTopico.getId()).toUri();
+        return ResponseEntity.created(uri).body(new TopicoDTO(novoTopico));
     }
 }
