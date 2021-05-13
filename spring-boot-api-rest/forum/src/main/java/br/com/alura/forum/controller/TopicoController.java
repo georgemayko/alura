@@ -2,10 +2,9 @@ package br.com.alura.forum.controller;
 
 import br.com.alura.forum.controller.dto.TopicoDTO;
 import br.com.alura.forum.controller.form.TopicoForm;
-import br.com.alura.forum.controller.repository.CursoRepository;
-import br.com.alura.forum.controller.repository.TopicoRepository;
+import br.com.alura.forum.repository.CursoRepository;
+import br.com.alura.forum.repository.TopicoRepository;
 import br.com.alura.forum.modelo.Topico;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
