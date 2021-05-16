@@ -44,6 +44,7 @@ public class TopicoController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<TopicoDTO> cadastraTopico( @RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico novoTopico = repo.save(form.converter(cursoRepository));
         URI uri = uriBuilder.path(TOPICOS_PATH + "/{id}").buildAndExpand(novoTopico.getId()).toUri();
@@ -59,9 +60,16 @@ public class TopicoController {
     }
 
     @Transactional
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TopicoDTO> atualizar(@PathVariable("id") Long id, @Valid @RequestBody AtualizacaoTopicoForm form){
         Topico topico = form.atualizar(id, repo);
             return ResponseEntity.ok(new TopicoDTO(topico));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity a (@PathVariable("id") Long id){
+        repo.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
