@@ -4,10 +4,9 @@ import br.com.alura.forum.controller.dto.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.dto.DetalheDoTopicoDTO;
 import br.com.alura.forum.controller.dto.TopicoDTO;
 import br.com.alura.forum.controller.form.TopicoForm;
+import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
-import br.com.alura.forum.modelo.Topico;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +16,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(TopicoController.TOPICOS_PATH)
@@ -62,14 +59,21 @@ public class TopicoController {
     @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TopicoDTO> atualizar(@PathVariable("id") Long id, @Valid @RequestBody AtualizacaoTopicoForm form){
-        Topico topico = form.atualizar(id, repo);
+        try {
+            Topico topico = form.atualizar(id, repo);
             return ResponseEntity.ok(new TopicoDTO(topico));
+        } catch(EntityNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity a (@PathVariable("id") Long id){
-        repo.deleteById(id);
+        Optional<Topico> possivelTopico = repo.findById(id);git
+        if(possivelTopico.isEmpty())
+            return ResponseEntity.notFound().build();
+        repo.delete(possivelTopico.get());
         return ResponseEntity.ok().build();
     }
 }
