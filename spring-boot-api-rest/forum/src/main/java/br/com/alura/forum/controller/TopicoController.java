@@ -1,12 +1,15 @@
 package br.com.alura.forum.controller;
 
-import br.com.alura.forum.controller.form.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.dto.DetalheDoTopicoDTO;
 import br.com.alura.forum.controller.dto.TopicoDTO;
+import br.com.alura.forum.controller.form.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +19,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,11 +35,14 @@ public class TopicoController {
     }
 
     @GetMapping
-    public List<TopicoDTO> listaTopicos(String nomeCurso){
+    public Page<TopicoDTO> listaTopicos(@RequestParam(value = "nomeCurso", required = false) String nomeCurso,
+                                        @RequestParam("pagina") Integer pagina,
+                                        @RequestParam("qtd") Integer qtd){
+       Pageable page = PageRequest.of(pagina, qtd);
        if(nomeCurso != null){
-           return TopicoDTO.converter(repo.findByCurso_nomeContainingIgnoreCase(nomeCurso));
+           return TopicoDTO.converter(repo.findByCurso_nomeContainingIgnoreCase(nomeCurso, page));
        }
-       return TopicoDTO.converter(repo.findAll());
+       return TopicoDTO.converter(repo.findAll(page));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
