@@ -70,7 +70,7 @@ public class TopicoController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity a (@PathVariable("id") Long id){
-        Optional<Topico> possivelTopico = repo.findById(id);git
+        Optional<Topico> possivelTopico = repo.findById(id);
         if(possivelTopico.isEmpty())
             return ResponseEntity.notFound().build();
         repo.delete(possivelTopico.get());
