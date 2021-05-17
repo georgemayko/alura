@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,16 +38,11 @@ public class TopicoController {
 
     @GetMapping
     public Page<TopicoDTO> listaTopicos(@RequestParam(value = "nomeCurso", required = false) String nomeCurso,
-                                        @RequestParam("pagina") Integer pagina,
-                                        @RequestParam("qtd") Integer qtd,
-                                        @RequestParam("ordenacao") String ordenacao){
-
-       Pageable page = PageRequest.of(pagina, qtd, Sort.Direction.ASC, ordenacao);
-       
+                                        @PageableDefault( page = 0, size = 10, direction = Sort.Direction.DESC, sort = "id") Pageable paginacao){
        if(nomeCurso != null){
-           return TopicoDTO.converter(repo.findByCurso_nomeContainingIgnoreCase(nomeCurso, page));
+           return TopicoDTO.converter(repo.findByCurso_nomeContainingIgnoreCase(nomeCurso, paginacao));
        }
-       return TopicoDTO.converter(repo.findAll(page));
+       return TopicoDTO.converter(repo.findAll(paginacao));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
