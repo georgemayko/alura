@@ -7,6 +7,7 @@ import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,7 @@ public class TopicoController {
     }
 
     @GetMapping
+    @Cacheable("listaDeTopico")
     public Page<TopicoDTO> listaTopicos(@RequestParam(value = "nomeCurso", required = false) String nomeCurso,
                                         @PageableDefault( page = 0, size = 10, direction = Sort.Direction.DESC, sort = "id") Pageable paginacao){
        if(nomeCurso != null){
