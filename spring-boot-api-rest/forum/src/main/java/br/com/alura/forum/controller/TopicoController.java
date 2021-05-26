@@ -7,7 +7,9 @@ import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.modelo.Topico;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(TopicoController.TOPICOS_PATH)
+@CacheConfig(cacheNames = {TopicoController.CACHE_LISTA_DE_TOPICO})
 public class TopicoController {
 
     public static final String TOPICOS_PATH = "/topicos";
@@ -40,7 +43,7 @@ public class TopicoController {
     }
 
     @GetMapping
-    @Cacheable(CACHE_LISTA_DE_TOPICO)
+    @Cacheable
     public Page<TopicoDTO> listaTopicos(@RequestParam(value = "nomeCurso", required = false) String nomeCurso,
                                         @PageableDefault( page = 0, size = 10, direction = Sort.Direction.DESC, sort = "id") Pageable paginacao){
        if(nomeCurso != null){
@@ -51,7 +54,7 @@ public class TopicoController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    @CacheEvict(value = CACHE_LISTA_DE_TOPICO, allEntries = true)
+    @CacheEvict(allEntries = true)
     public ResponseEntity<TopicoDTO> cadastraTopico( @RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico novoTopico = repo.save(form.converter(cursoRepository));
         URI uri = uriBuilder.path(TOPICOS_PATH + "/{id}").buildAndExpand(novoTopico.getId()).toUri();
@@ -68,7 +71,7 @@ public class TopicoController {
 
     @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(value = CACHE_LISTA_DE_TOPICO, allEntries = true)
+    @CacheEvict(allEntries = true)
     public ResponseEntity<TopicoDTO> atualizar(@PathVariable("id") Long id, @Valid @RequestBody AtualizacaoTopicoForm form){
         try {
             Topico topico = form.atualizar(id, repo);
@@ -80,7 +83,7 @@ public class TopicoController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @CacheEvict(value = CACHE_LISTA_DE_TOPICO, allEntries = true)
+    @CacheEvict(allEntries = true)
     public ResponseEntity a (@PathVariable("id") Long id){
         Optional<Topico> possivelTopico = repo.findById(id);
         if(possivelTopico.isEmpty())
