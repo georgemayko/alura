@@ -1,7 +1,9 @@
 package br.com.alura.forum.config.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,6 +22,12 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
         this.securityService = securityService;
     }
 
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
     @Override // autenticacao
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(securityService).passwordEncoder(new BCryptPasswordEncoder());
@@ -28,6 +36,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
     @Override//autorizacao
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .antMatchers(HttpMethod.GET, "/topicos", "/topicos/*").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable()
