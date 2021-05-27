@@ -45,4 +45,8 @@ public class TokenService {
             return false;
         }
     }
+
+    public String getEmailUsuario(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    }
 }
